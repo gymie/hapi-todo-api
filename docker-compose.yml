@@ -1,0 +1,98 @@
+version: "3.5"
+services:
+  api:
+    container_name: todo-api
+    build: 
+      context: .
+      dockerfile: Dockerfile-api
+    ports: 
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    environment:
+      HOST: production
+      PORT: 5000
+      PGUSER: developer
+      PGHOST: postgres
+      PGPASSWORD: supersecretpassword
+      PGDATABASE: dbtodo
+      PGPORT: 5432
+      ACCESS_TOKEN_KEY: 891749ee747f72b662c93d4fafb3756f5c624d708dd0095f029a576e3dff328f55e1d4fc69b664ad792ff1ac9f7c846ab004fdab5c0c4e9186717c87ff88f173
+      REFRESH_TOKEN_KEY: fc7b4474dae7c91359607c6ed113692603e3e3d15793839cc46a428ea42ae0c3122f2f7801fd1ac554f62529649bd5d36a3de7af98a68a322ba1d0e0d3f1cec1
+      ACCESS_TOKEN_AGE: 1800
+      RABBITMQ_SERVER: amqp://rabbitmq
+      REDIS_SERVER: redis
+      STORAGE_SERVICE: local
+    networks:
+      - backend
+
+  consumer:
+    container_name: todo-consumer
+    build: 
+      context: .
+      dockerfile: Dockerfile-consumer
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      PGUSER: developer
+      PGHOST: postgres
+      PGPASSWORD: supersecretpassword
+      PGDATABASE: dbtodo
+      PGPORT: 5432
+      MAIL_HOST: smtp.mailtrap.io
+      MAIL_PORT: 2525
+      MAIL_ADDRESS: <isi key sendiri>
+      MAIL_PASSWORD: <isi key sendiri>
+      RABBITMQ_SERVER: amqp://rabbitmq
+    networks:
+      - backend
+      
+  postgres:
+    container_name: postgres
+    ports: 
+      - "5432:5432"
+    image: postgres:13.3-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: "developer"
+      POSTGRES_PASSWORD: "supersecretpassword"
+      POSTGRES_DB: "dbtodo"
+    networks:
+      - backend
+
+  adminer:
+    container_name: adminer
+    image: adminer:4.8.1-standalone
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+  redis:
+    container_name: redis
+    image: redis:6.2.4-alpine
+    restart: always
+    ports:
+        - "6379:6379"
+    networks: 
+        - backend
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+    networks: 
+        - backend
+        
+networks:
+  backend:
+    name: backend-network

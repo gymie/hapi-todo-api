@@ -1,0 +1,32 @@
+{
+  "name": "hapi-todo-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon ./src/server.js",
+    "start": "npm run migrate up && NODE_ENV=production node ./src/server.js",
+    "migrate": "node-pg-migrate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^20.2.1",
+    "@hapi/inert": "^6.0.3",
+    "@hapi/jwt": "^2.1.1",
+    "amqplib": "^0.8.0",
+    "aws-sdk": "^2.1122.0",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "joi": "^17.6.0",
+    "nanoid": "^3.3.2",
+    "node-pg-migrate": "^6.2.1",
+    "pg": "^8.7.3",
+    "redis": "^3.1.2"
+  }
+}
