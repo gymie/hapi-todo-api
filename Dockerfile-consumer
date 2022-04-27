@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /usr/src/app
 
-COPY api/package*.json ./
+COPY consumer/package*.json ./
 
 RUN npm install --production
 
